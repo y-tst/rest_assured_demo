@@ -16,16 +16,17 @@ public class ReqresTest {
 
     @Test
     public void checkAvatarAndIdTest() {
+        Specifications.installSpecification(Specifications.requestSpec(REQRES_URL), Specifications.responseSpecOK200());
         List<UserData> users = given()
                 .when()
-                .get(REQRES_URL + "/api/users?page=2")
+                .get("/api/users?page=2")
                 .then()
                 .log().all()
                 .extract().body().jsonPath().getList("data", UserData.class);
 
         users.forEach(x -> Assertions.assertTrue(x.getAvatar().contains(x.getId().toString())));
         // the same:
-        Assertions.assertTrue(users.stream().allMatch(x -> x.getAvatar().contains(x.getId().toString())));
+
 
         Assertions.assertTrue(users.stream().allMatch(x -> x.getEmail().endsWith("@reqres.in")));
 
@@ -37,6 +38,19 @@ public class ReqresTest {
         for (int i = 0; i < avatars.size(); i++) {
             Assertions.assertTrue(avatars.get(i).contains(ids.get(i)));
         }
-
     }
+
+        // Check error for 400 request:
+//        @Test
+//        public void checkAvatarAndIdTest1() {
+//            Specifications.installSpecification(Specifications.requestSpec(REQRES_URL), Specifications.responseSpec400());
+//            List<UserData> users1 = given()
+//                    .when()
+//                    .get("/api/users?page=2")
+//                    .then()
+//                    .log().all()
+//                    .extract().body().jsonPath().getList("data", UserData.class);
+//
+//            Assertions.assertTrue(users1.stream().allMatch(x -> x.getAvatar().contains(x.getId().toString())));
+//    }
 }
