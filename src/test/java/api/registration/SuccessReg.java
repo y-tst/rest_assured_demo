@@ -1,4 +1,4 @@
-package api;
+package api.registration;
 
 public class SuccessReg extends Register{
     private Integer id;

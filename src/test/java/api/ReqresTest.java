@@ -1,6 +1,12 @@
 package api;
 
 
+import api.data.ResourceData;
+import api.data.UserData;
+import api.registration.Register;
+import api.registration.SuccessReg;
+import api.registration.UnSuccessReg;
+import api.spec.Specifications;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -92,12 +98,36 @@ public class ReqresTest {
                 .body(newUser)
                 .when()
                 .post("api/register")
-                .then().log().body()
+                .then() //.assertThat().statusCode(400) проверить статус ошибки, если не указана спецификация
+                .log().body()
                 .extract().as(UnSuccessReg.class);
 
         Assertions.assertNotNull(unSuccessReg.getError());
         Assertions.assertEquals(unSuccessReg.getError(), error);
     }
+
+    @Test
+    @DisplayName("Items are sorted by Year test")
+    public void itemsSortedByYearTest(){
+        Specifications.installSpecification(Specifications.requestSpec(REQRES_URL), Specifications.responseSpecOK200());
+        String host = "api/unknown";
+
+        List<ResourceData> resourceDataList = given()
+                .when()
+                .get(host)
+                .then()
+                .log()
+                .body()
+                .extract().jsonPath().getList("data", ResourceData.class);
+
+        Assertions.assertNotNull(resourceDataList);
+
+        List<Integer> years = resourceDataList.stream().map(ResourceData::getYear).collect(Collectors.toList());
+        List<Integer> sortedYears = resourceDataList.stream().map(ResourceData::getYear).sorted().collect(Collectors.toList());
+        System.out.println("Unsorted years: " + years + "\nSorted years: " + sortedYears);
+        Assertions.assertEquals(years, sortedYears);
+    }
+
 }
 
 
