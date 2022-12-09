@@ -87,7 +87,7 @@ public class ReqresTest {
 
     @Test
     @DisplayName("Unsuccessful User registration test")
-    public void unSuccessfulRegistrationTest(){
+    public void unSuccessfulRegistrationTest() {
         Specifications.installSpecification(Specifications.requestSpec(REQRES_URL), Specifications.responseSpec400());
         String email = "sydney@fife";
         String password = "";
@@ -108,7 +108,7 @@ public class ReqresTest {
 
     @Test
     @DisplayName("Items are sorted by Year test")
-    public void itemsSortedByYearTest(){
+    public void itemsSortedByYearTest() {
         Specifications.installSpecification(Specifications.requestSpec(REQRES_URL), Specifications.responseSpecOK200());
         String host = "api/unknown";
 
@@ -128,6 +128,16 @@ public class ReqresTest {
         Assertions.assertEquals(years, sortedYears);
     }
 
+    @Test
+    @DisplayName("Delete user returns 204 code")
+    public void deleteUserTest() {
+        Specifications.installSpecification(Specifications.requestSpec(REQRES_URL), Specifications.responseSpecUnique(204));
+
+        given()
+                .when()
+                .delete("api/users/2")
+                .then().log().all();
+    }
 }
 
 
