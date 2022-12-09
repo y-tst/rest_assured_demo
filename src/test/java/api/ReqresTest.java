@@ -7,11 +7,14 @@ import api.registration.Register;
 import api.registration.SuccessReg;
 import api.registration.UnSuccessReg;
 import api.spec.Specifications;
+import api.time_check.UserTime;
+import api.time_check.UserTimeResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
+import java.time.Clock;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -138,6 +141,30 @@ public class ReqresTest {
                 .delete("api/users/2")
                 .then().log().all();
     }
+
+    @Test
+    @DisplayName("Time consistancy check")
+    public void timeCheck(){
+        Specifications.installSpecification(Specifications.requestSpec(REQRES_URL), Specifications.responseSpecOK200());
+        String name = "morpheus";
+        String job = "zion resident";
+        String host = "api/users/2";
+
+        UserTime userTime = new UserTime(name, job);
+        UserTimeResponse userTimeResponse = given()
+                .body(userTime)
+                .when()
+                .put(host)
+                .then().log().all()
+                .extract().as(UserTimeResponse.class);
+
+        String regex1 = "(.{11})$";
+        String regex2 = "(.{5})$";
+        String currentTime = Clock.systemUTC().instant().toString().replaceAll(regex1, "");
+
+        Assertions.assertEquals(currentTime, userTimeResponse.getUpdatedAt().replaceAll(regex2, ""));
+    }
+
 }
 
 
