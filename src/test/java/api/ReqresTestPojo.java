@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
 
-public class ReqresTest {
+public class ReqresTestPojo {
 
     private final static String REQRES_URL = "https://reqres.in";
 
